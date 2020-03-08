@@ -14,6 +14,7 @@ while True:
     turn = 0
     step = 1
     last = pile.pop()
+    if last[0] == 12: step = -step
     new = True
     while True:
         if new and last[0] == 7:
@@ -25,10 +26,8 @@ while True:
         elif new and last[0] == 11:
             new = False
         else:
-            if new and last[0] == 12:
-                step *= -1
             new = False
-            cards = (c for c in players[turn] if c[0] == last[0] or c[1] == last[1])
+            cards = [c for c in players[turn] if c[0] == last[0] or c[1] == last[1]]
             if len(cards) > 0:
                 new = True 
                 last = max(cards)
@@ -43,4 +42,6 @@ while True:
                     last = card
                 else:
                     players[turn].append(card)
+            if new and last[0] == 12:
+                step = -step
         turn = (turn + step) % P
