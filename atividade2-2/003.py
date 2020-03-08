@@ -2,21 +2,20 @@ while True:
     n = int(input())
     if n == 0: break
     entering = input().split()
-    entering.reverse()
     permutation = input().split()
     station = []
     result = ''
-    for e in permutation:
-        if e in entering:
-            while entering[-1] != e:
-                station.append(entering.pop())
-                result += 'I'
-            entering.pop()
-            result += 'IR'
-        elif station[-1] == e:
+    i = j = 0
+    while True:
+        if (len(station) != 0 and i < n and station[-1] == permutation[i]):
             station.pop()
+            i += 1
             result += 'R'
-        else:
-            result += ' Impossible'
-            break
+        elif (j < n):
+            station.append(entering[j])
+            j += 1
+            result += 'I'
+        else: break
+    if len(station) != 0:
+        result += ' Impossible'
     print(result)
