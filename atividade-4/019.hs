@@ -1,5 +1,3 @@
-
-
 prime_help :: Int -> Int -> Int -> Bool
 prime_help a b limit =
     if b > limit then
@@ -16,6 +14,18 @@ prime n | (n <= 1) = False
         | otherwise = prime_help n 2 (ceiling (sqrt (fromIntegral n)))
 
 
-main = do
+goldbach_help :: Int -> Int -> Int
+goldbach_help n m =
+    if prime m && prime (n - m) then
+        m
+    else
+        goldbach_help n (m + 1)
+
+
+goldbach :: Int -> Int
+goldbach n = goldbach_help n 2
+
+
+main = do 
     n <- getLine
-    print (prime (read n :: Int))
+    print (goldbach (read n :: Int))
