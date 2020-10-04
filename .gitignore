@@ -131,3 +131,7 @@ dmypy.json
 # Haskell
 *.hi
 *.o
+**/main
+**/Main
+
+**/*.zip
