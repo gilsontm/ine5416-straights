@@ -1,80 +1,8 @@
+module Solver (solve) where
+
+import Square
+import Board
 import Data.List
-
-{-
-    'Square' é uma tupla (Int,Bool) e representa uma casa no tabuleiro:
-        > Int: valor da casa (se for zero, a casa é vazia)
-        > Bool: cor da casa (True = branco; False = negro)
--}
-type Square = (Int, Bool)
-
-{-
-    'Board' é uma lista de Squares, e representa o tabuleiro. Como o tabuleiro
-    é bidimensional, mas a lista é apenas unidimensional, utiliza-se a convenção
-    de ordenamento em que a lista representa uma matriz cujas linhas foram concatenadas.
-
-    Exemplo:    | a b c |
-                | d e f |   >>>   [a b c d e f g h i]
-                | g h i | 
--}
-type Board = [Square]
-
--- | A função 'w' recebe um inteiro, e retorna um Square branco com esse valor
-w :: Int -> Square
-w v = (v, True)
-
--- | A função 'b' recebe um inteiro, e retorna um Square negro com esse valor
-b :: Int -> Square
-b v = (v, False)
-
--- | 'value' retorna o valor inteiro de um Square
-value :: Square -> Int
-value (v, _) = v
-
--- | 'isBlack' retorna True caso o Square seja negro, e False caso contrário
-isBlack :: Square -> Bool
-isBlack (_, b) = not b
-
--- | 'isEmpty' retorna True se o valor do Square de entrada for zero
-isEmpty :: Square -> Bool
-isEmpty (v, b) = (v == 0) && b
-
-{- 
-    A função 'setValue' recebe um Square e um inteiro, e retorna um Square da mesma
-    cor que o Square de entrada, porém com o valor do inteiro recebido.
--}
-setValue :: Square -> Int -> Square
-setValue (_, b) v = (v, b)
-
-{- 
-    'side' retorna o tamanho do lado de um tabuleiro.
-    Note que tabuleiros sempre devem ser quadrados.
--}
-side :: Board -> Int
-side b = round (sqrt (fromIntegral(length b)))
-
--- | 'coord' transforma um índice (representação em lista) em uma posição (y,x)
-coord :: Board -> Int -> (Int, Int)
-coord b i = (i `div` (side b), i `mod` (side b))
-
--- | 'index' transforma uma posição (y,x) em um índice da representação em lista
-index :: Board -> (Int, Int) -> Int
-index b (y,x) = y * (side b) + x
-
--- | 'readAt' retorna o Square na posição (y,x) do tabuleiro
-readAt :: Board -> (Int, Int) -> Square
-readAt b (y,x) = b !! (index b (y,x))
-
--- | 'writeAt' "escreve" um valor na posição (y,x) e retorna um novo tabuleiro
-writeAt :: Board -> (Int, Int) -> Int -> Board
-writeAt b (y,x) v = write' b (index b (y,x)) v
-    where write' (a:b) i v
-            | i == 0 = (setValue a v):b
-            | otherwise = a:(write' b (i-1) v)
-
--- | 'emptyAt' retorna verdadeiro se a posição (y,x) do tabuleiro for branca e vazia 
-emptyAt :: Board -> (Int, Int) -> Bool
-emptyAt b (y,x) = isEmpty (readAt b (y,x))
-
 
 {- 
     'solve' soluciona o tabuleiro propriamente dito, e retorna uma lista
@@ -204,33 +132,3 @@ right b (y,x)
     | isBlack (readAt b (y,x)) = (y,x-1)
     | x == ((side b) - 1)      = (y,x)
     | otherwise                = right b (y,x+1)
-
--- Funções de parseamento de inputs e formatação de outputs.
-toString :: Square -> String
-toString (v, True)  = " " ++ show(v) ++ " "
-toString (v, False) = "[" ++ show(v) ++ "]"
-
-showBoard :: Board -> IO ()
-showBoard b = putStrLn (showBoard' b ((side b)-1) ((side b)-1))
-        where   showBoard' [] _ _    = ""
-                showBoard' (a:b) n 0 = (toString a) ++ "\n" ++ (showBoard' b n n)
-                showBoard' (a:b) n m = (toString a) ++ " " ++ (showBoard' b n (m-1))
-
-parseLine :: [String] -> Board
-parseLine [] = []
-parseLine ((hh:tt):t)
-    | hh == '.' = (w(read tt :: Int)) : (parseLine t)
-    | otherwise = (b(read tt :: Int)) : (parseLine t)
-
-parser :: Int -> IO ()
-parser n = parser' n []
-    where parser' 0 b = mapM_ showBoard (solve b (0,0) [])
-          parser' n b = do 
-                            line <- getLine
-                            parser' (n-1) (b ++ (parseLine (words line)))
-
-main = do
-    putStrLn "Solving"
-    side <- getLine
-    parser (read side :: Int)
-    putStrLn "Done"
