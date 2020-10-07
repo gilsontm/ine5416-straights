@@ -19,7 +19,7 @@ showBoard b = putStrLn ("\n" ++ (showBoard' b ((side b)-1) ((side b)-1)))
 parseLine :: [String] -> Board
 parseLine [] = []
 parseLine ((hh:tt):t)
-    | hh == '.' = (white (read tt :: Int)) : (parseLine t)
+    | hh == 'w' = (white (read tt :: Int)) : (parseLine t)
     | otherwise = (black (read tt :: Int)) : (parseLine t)
 
 -- | "parser" lê a entrada, monta um Board, soluciona-o e imprime o resultado no terminal

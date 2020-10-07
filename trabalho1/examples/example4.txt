@@ -1,0 +1,5 @@
+4
+w4 w3 b0 w1
+w0 w0 w0 w0
+w0 b0 w0 w0
+w0 w0 w0 w0
